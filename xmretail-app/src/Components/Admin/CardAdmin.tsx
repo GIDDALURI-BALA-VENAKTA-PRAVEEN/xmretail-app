@@ -192,17 +192,22 @@ const CardAdmin = () => {
   className="border p-2 w-full rounded"
 >
   <option value="" disabled selected>Select a category</option>
-  <option value="Electronics">Electronics</option>
-  <option value="Fashion & Apparel">Fashion & Apparel</option>
-  <option value="Home & Furniture">Home & Furniture</option>
-  <option value="Beauty & Personal Care">Beauty & Personal Care</option>
-  <option value="Books & Media">Books & Media</option>
-  <option value="Sports & Fitness">Sports & Fitness</option>
-  <option value="Toys & Baby Care">Toys & Baby Care</option>
-  <option value="Automotive">Automotive</option>
-  <option value="Groceries">Groceries</option>
-  <option value="Health & Wellness">Health & Wellness</option>
+  <option value="BIGGEST SALES">BIGGEST SALES</option>
+  <option value="BANKING">BANKING</option>
+  <option value="HOTELS & FLIGHTS">HOTELS & FLIGHTS</option>
+  <option value="ELECTRONICS">ELECTRONICS</option>
+  <option value="MOBILES">MOBILES</option>
+  <option value="FASHION">FASHION</option>
+  <option value="BEAUTY & GROOMING">BEAUTY & GROOMING</option>
+  <option value="HEALTH & WELLNESS">HEALTH & WELLNESS</option>
+  <option value="PHARMACY">PHARMACY</option>
+  <option value="HOME & KITCHEN">HOME & KITCHEN</option>
+  <option value="EDUCATION">EDUCATION</option>
+  <option value="FOOD & GROCERY">FOOD & GROCERY</option>
+  <option value="HOSTING">HOSTING</option>
+  <option value="DEPARTMENTAL">DEPARTMENTAL</option>
 </select>
+
               
               <button type="submit" className="w-full bg-blue-500 text-white p-2 rounded-lg">
                 {editingCard ? "Update Card" : "Add Card"}

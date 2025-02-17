@@ -1,82 +1,104 @@
+import { useEffect, useState } from "react";
+
 import Logo from "./assets/Group 1.png";
-import { useState } from "react";
+import axios from "axios";
+
+interface CardType {
+  _id: string;
+  name: string;
+  image: string;
+  category: string;
+  cashback: string;
+}
 
 function Nav() {
-  const [showSearch, setShowSearch] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [cards, setCards] = useState<CardType[]>([]);
+  const [filteredCards, setFilteredCards] = useState<CardType[]>([]);
+  const [showDropdown, setShowDropdown] = useState(false);
+
+  useEffect(() => {
+    axios.get("http://localhost:5000/api/cards").then((res) => {
+      setCards(res.data);
+    });
+  }, []);
+
+  useEffect(() => {
+    if (searchTerm.trim() === "") {
+      setFilteredCards([]);
+      setShowDropdown(false);
+    } else {
+      const filtered = cards.filter((card) =>
+        card.name.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      setFilteredCards(filtered);
+      setShowDropdown(true);
+    }
+  }, [searchTerm, cards]);
 
   return (
-    <nav className="bg-white border-gray-200 dark:bg-gray-900">
-      <div className="max-w-screen-xl flex items-center justify-between mx-auto p-3">
+    <nav className="bg-white border-b border-gray-200 dark:bg-gray-900">
+      <div className="max-w-screen-xl mx-auto flex items-center justify-between p-3">
         {/* Logo */}
         <a href="#" className="flex items-center gap-2">
-          <img
-            src={Logo}
-            className="h-8 w-20 md:w-auto transition-all duration-300 flex-shrink-0"
-            alt="XM RETAIL"
-          />
-          <span className="text-lg font-semibold dark:text-white  md:block">XM RETAIL</span>
+          <img src={Logo} className="h-8 w-20 md:w-auto transition-all duration-300" alt="XM RETAIL" />
+          <span className="text-lg font-semibold dark:text-white hidden md:block">XM RETAIL</span>
         </a>
 
-        {/* Search Bar - Visible on Desktop Only */}
-        <div className="hidden md:flex flex-grow justify-center">
-          <div className="relative w-full max-w-md">
-            <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-              <svg className="w-4 h-4 text-gray-500 dark:text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                <path
-                  stroke="currentColor"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
-                />
-              </svg>
-            </div>
-            <input
-              type="text"
-              className="block w-full p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder="Search..."
-            />
-          </div>
-        </div>
-
-        {/* Right Side Icons */}
-        <div className="flex items-center gap-2">
-          {/* Mobile Search Button */}
-          <button
-            onClick={() => setShowSearch(!showSearch)}
-            className="md:hidden text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 p-2 rounded-lg"
-          >
-            <svg className="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-              <path
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
-              />
-            </svg>
-          </button>
-
-          {/* Login/Sign Up Button */}
-          <button
-            type="button"
-            className="text-white bg-[#ff6726] hover:bg-[#FFB74D] focus:ring-2 focus:outline-none focus:ring-[#ff8080] rounded-md text-sm px-4 py-3 dark:bg-[#FF9800] dark:hover:bg-[#FB8C00] dark:focus:ring-[#F57C00] font-semibold"
-          >
-            Login/Sign up
-          </button>
-        </div>
-      </div>
-
-      {/* Mobile Search Bar - Appears Below When Clicked */}
-      {showSearch && (
-        <div className="md:hidden p-3">
+        {/* Search Bar - Centered */}
+        <div className="relative flex-1 max-w-md mx-4">
           <input
             type="text"
-            className="block w-full p-2 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            placeholder="Search..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="block w-full p-3 pl-10 text-sm text-gray-900 border border-gray-300 rounded-full bg-gray-50 focus:ring-orange-500 focus:border-orange-500"
+            placeholder="Search brands..."
           />
+          <div className="absolute inset-y-0 left-3 flex items-center text-gray-500">
+            🔍
+          </div>
+
+          {/* Search Results Dropdown */}
+          {showDropdown && (
+            <div className="absolute top-12 left-0 w-full bg-white border border-gray-300 rounded-lg shadow-lg p-3 z-50">
+              {filteredCards.length > 0 ? (
+                <div>
+                  {filteredCards.map((card) => (
+                    <div key={card._id} className="flex items-center justify-between p-2 hover:bg-gray-100 rounded-md">
+                      <div className="flex items-center gap-2">
+                        <img src={`http://localhost:5000/uploads/${card.image}`} alt={card.name} className="w-8 h-8 rounded-full" />
+                        <span className="font-medium">{card.name}</span>
+                      </div>
+                      <span className="text-sm font-semibold text-gray-600">{card.cashback}%</span>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-center text-gray-500">No results found</p>
+              )}
+            </div>
+          )}
         </div>
-      )}
+
+        {/* Login/Signup Button */}
+        <button
+          type="button"
+          className="text-white bg-[#ff6726] hover:bg-[#FFB74D] focus:ring-2 focus:outline-none focus:ring-[#ff8080] rounded-md text-sm px-4 py-3 dark:bg-[#FF9800] dark:hover:bg-[#FB8C00] dark:focus:ring-[#F57C00] font-semibold"
+        >
+          Login/Sign up
+        </button>
+      </div>
+
+      {/* Mobile Layout: Search Below */}
+      <div className="md:hidden p-3">
+        <input
+          type="text"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="block w-full p-3 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-orange-500 focus:border-orange-500"
+          placeholder="Search brands..."
+        />
+      </div>
     </nav>
   );
 }
