@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 
+import { Link } from "react-router-dom"; // Import Link for navigation
 import Logo from "./assets/Group 1.png";
 import axios from "axios";
 
@@ -45,7 +46,7 @@ function Nav() {
           <span className="text-lg font-semibold dark:text-white hidden md:block">XM RETAIL</span>
         </a>
 
-        {/* Search Bar - Centered */}
+        {/* Search Bar */}
         <div className="relative flex-1 max-w-md mx-4">
           <input
             type="text"
@@ -64,13 +65,17 @@ function Nav() {
               {filteredCards.length > 0 ? (
                 <div>
                   {filteredCards.map((card) => (
-                    <div key={card._id} className="flex items-center justify-between p-2 hover:bg-gray-100 rounded-md">
+                    <Link
+                      to={`/card/${card._id}`} // Navigates to CardDetails
+                      key={card._id}
+                      className="flex items-center justify-between p-2 hover:bg-gray-100 rounded-md cursor-pointer"
+                    >
                       <div className="flex items-center gap-2">
                         <img src={`http://localhost:5000/uploads/${card.image}`} alt={card.name} className="w-8 h-8 rounded-full" />
                         <span className="font-medium">{card.name}</span>
                       </div>
                       <span className="text-sm font-semibold text-gray-600">{card.cashback}%</span>
-                    </div>
+                    </Link>
                   ))}
                 </div>
               ) : (
@@ -87,17 +92,6 @@ function Nav() {
         >
           Login/Sign up
         </button>
-      </div>
-
-      {/* Mobile Layout: Search Below */}
-      <div className="md:hidden p-3">
-        <input
-          type="text"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="block w-full p-3 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-orange-500 focus:border-orange-500"
-          placeholder="Search brands..."
-        />
       </div>
     </nav>
   );

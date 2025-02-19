@@ -6,18 +6,15 @@ import { useState } from "react";
 
 function App() {
   const [selectedCategory, setSelectedCategory] = useState<string>("");
+
   return (
     <>
-      <div>
       <Nav />
-      <Carousel />      
+      <Carousel />
       <Category setSelectedCategory={setSelectedCategory} />
       <CardApp selectedCategory={selectedCategory} />
-    </div>
-    
-     
     </>
-  )
+  );
 }
 
-export default App
+export default App;

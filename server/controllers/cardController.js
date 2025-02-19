@@ -14,20 +14,48 @@ export const getCards = async (req, res) => {
 };
 
 // @desc Create a new card
+// export const createCard = async (req, res) => {
+//   try {
+//     const { name, cashback, category, details } = req.body;
+//     const image = req.file ? req.file.filename : null; // Get uploaded file
+
+//     const newCard = new Card({ name, cashback, category, details, image });
+//     await newCard.save();
+
+//     res.json({ message: "Card added successfully", card: newCard });
+//   } catch (error) {
+//     console.error("Error saving card:", error);
+//     res.status(500).json({ error: "Failed to add card" });
+//   }
+// };
+
+
 export const createCard = async (req, res) => {
   try {
-    const { name, cashback, category, details } = req.body;
-    const image = req.file ? req.file.filename : null; // Get uploaded file
+    const { name, cashback, category, details, validityMonths, amounts } = req.body;
 
-    const newCard = new Card({ name, cashback, category, details, image });
+    if (!validityMonths) {
+      return res.status(400).json({ message: "Validity (months) is required." });
+    }
+
+    const newCard = new Card({
+      name,
+      cashback,
+      category,
+      details,
+      validityMonths,
+      amounts: amounts.split(",").map(a => a.trim()), // Convert to array
+      image: req.file ? req.file.filename : null,
+    });
+
     await newCard.save();
-
-    res.json({ message: "Card added successfully", card: newCard });
+    res.status(201).json(newCard);
   } catch (error) {
-    console.error("Error saving card:", error);
-    res.status(500).json({ error: "Failed to add card" });
+    console.error("Error creating card:", error);
+    res.status(500).json({ message: "Server error" });
   }
 };
+
 
 // @desc Update a card
 export const updateCard = async (req, res) => {
@@ -91,3 +119,41 @@ export const deleteCard = async (req, res) => {
     res.status(500).json({ error: "Failed to delete card" });
   }
 };
+
+// //import Card from "../models/Card.js";
+
+// // Get single card by ID
+// export const fetchCardById = async (req, res) => {
+//   try {
+//     const card = await Card.findById(req.params.cardId);
+//     if (!card) return res.status(404).json({ message: "Card not found" });
+//     res.json(card);
+//   } catch (err) {
+//     res.status(500).json({ message: err.message });
+//   }
+// };
+
+// // Create new card
+// export const addNewCard = async (req, res) => {
+//   try {
+//     const { name, category, cashback } = req.body;
+//     const image = req.file ? req.file.filename : null;
+
+//     const newCard = new Card({ name, image, category, cashback });
+//     await newCard.save();
+//     res.status(201).json(newCard);
+//   } catch (err) {
+//     res.status(400).json({ message: err.message });
+//   }
+// };
+
+// // Delete card by ID
+// export const removeCard = async (req, res) => {
+//   try {
+//     const deletedCard = await Card.findByIdAndDelete(req.params.cardId);
+//     if (!deletedCard) return res.status(404).json({ message: "Card not found" });
+//     res.json({ message: "Card removed successfully" });
+//   } catch (err) {
+//     res.status(500).json({ message: err.message });
+//   }
+// };

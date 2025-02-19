@@ -1,3 +1,4 @@
+import Card from "./models/Card.js";
 import adminRoute from "./routes/adminRoutes.js";
 import cardRoutes from "./routes/cardRoutes.js";
 import connectDB from "./config/db.js";
@@ -27,6 +28,21 @@ app.use("/uploads", express.static("uploads"));
 
 // API Routes
 app.use("/api/cards", cardRoutes);
+
+
+//for card
+
+app.get("/api/cards/:id", async (req, res) => {
+  try {
+    console.log(`API hit for card ID: ${req.params.id}`); // Debugging
+    const card = await Card.findById(req.params.id);
+    if (!card) return res.status(404).json({ message: "Card not found" });
+    res.json(card);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+//app.use("/api/cards", cardRoutes);
 
 // Error Middleware
 app.use(errorHandler);
