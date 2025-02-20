@@ -1,12 +1,16 @@
 import Card from "./models/Card.js";
 import adminRoute from "./routes/adminRoutes.js";
+import authRoutes from "./routes/authRoutes.js";
 import cardRoutes from "./routes/cardRoutes.js";
 import connectDB from "./config/db.js";
 import cors from "cors";
+import dotenv from 'dotenv';
 import errorHandler from "./middleware/errorMiddleware.js";
 import express from "express";
 import imageRoutes from "./routes/imageRoutes.js";
+import mongoose from "mongoose";
 import path from "path";
+import userRoutes from "./routes/userRoutes.js";
 
 const app = express();
 const PORT = 5000;
@@ -46,6 +50,12 @@ app.get("/api/cards/:id", async (req, res) => {
 
 // Error Middleware
 app.use(errorHandler);
+
+
+//login
+app.use("/api/auth", authRoutes);
+app.use("/api/user", userRoutes);
+
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
