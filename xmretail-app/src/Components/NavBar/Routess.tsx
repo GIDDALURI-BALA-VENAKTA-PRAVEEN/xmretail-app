@@ -12,11 +12,11 @@ function Routess() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<App />} />
+        <Route path="/" element={<App />} exact />
 
         <Route path="/login" element={<Login />} />
-        <Route path="/home" element={<Home></Home>} />
-        <Route path="/profile" element={<Profile></Profile>}/>
+        <Route path="/home" element={<Home />} />
+        <Route path="/profile" element={<Profile />} />
         
         <Route path="/card/:id" element={<CardDetails />} />
         <Route path="/admin/login" element={<AdminLogin />} />
