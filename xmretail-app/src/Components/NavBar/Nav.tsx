@@ -4,10 +4,6 @@ import { Link } from "react-router-dom";
 import Logo from "./assets/Group 1.png";
 import axios from "axios";
 
-// import Login from '../Login/Login';
-
-
-
 interface CardType {
   _id: string;
   name: string;
@@ -21,13 +17,13 @@ function Nav() {
   const [cards, setCards] = useState<CardType[]>([]);
   const [filteredCards, setFilteredCards] = useState<CardType[]>([]);
   const [showDropdown, setShowDropdown] = useState(false);
-  // const [isModalOpen, setIsModalOpen]= useState(false);
+  const apiUrl = import.meta.env.VITE_API_URL; // For Vite
 
   useEffect(() => {
-    axios.get("http://localhost:5000/api/cards").then((res) => {
+    axios.get(`${apiUrl}/api/cards`).then((res) => {
       setCards(res.data);
     });
-  }, []);
+  }, [apiUrl]);
 
   useEffect(() => {
     if (searchTerm.trim() === "") {
@@ -43,14 +39,13 @@ function Nav() {
   }, [searchTerm, cards]);
 
   return (
-    <nav className="bg-white border-b border-gray-200 dark:bg-gray-900 w-full">
+    <nav className="bg-[#F8F9FA] border-b   border-[#E0E0E0] dark:bg-[#1A202C] w-full">
       <div className="max-w-screen-xl mx-auto flex items-center justify-between px-3 py-2 sm:py-3">
-        
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2">
           <img
             src={Logo}
-            className="h-7 w-16 sm:h-8 sm:w-20 md:h-10 md:w-24 transition-all duration-300"
+            className="h-6 w-16 sm:h-8 sm:w-20 md:h-10 md:w-24 transition-all duration-300"
             alt="XM RETAIL"
           />
           <span className="text-base sm:text-lg md:text-xl font-semibold dark:text-white hidden sm:block">
@@ -59,12 +54,12 @@ function Nav() {
         </Link>
 
         {/* Search Bar */}
-        <div className="relative flex-1 max-w-[180px] sm:max-w-[250px] md:max-w-md lg:max-w-lg mx-2 sm:mx-4">
+        <div className="relative flex-1 mx-2 sm:mx-4 md:mx-6 lg:mx-8">
           <input
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="block w-full p-2.5 sm:p-3   pl-10  text-sm sm:text-base text-gray-900 border border-gray-300 rounded-full bg-gray-50 focus:ring-orange-500 focus:border-orange-500"
+            className="block w-full p-2.5 pl-10 text-sm sm:text-base text-gray-900 border border-gray-300 rounded-full bg-gray-50 focus:ring-orange-500 focus:border-orange-500 transition-all duration-300"
             placeholder="Search brands..."
           />
           <div className="absolute inset-y-0 left-2 flex items-center text-gray-500">
@@ -83,7 +78,7 @@ function Nav() {
                   >
                     <div className="flex items-center gap-2">
                       <img
-                        src={`http://localhost:5000/uploads/${card.image}`}
+                        src={`${apiUrl}/uploads/${card.image}`}
                         alt={card.name}
                         className="w-7 h-7 sm:w-8 sm:h-8 rounded-full"
                       />
@@ -97,7 +92,9 @@ function Nav() {
                   </Link>
                 ))
               ) : (
-                <p className="text-center text-gray-500 py-2 text-sm">No results found</p>
+                <p className="text-center text-gray-500 py-2 text-sm">
+                  No results found
+                </p>
               )}
             </div>
           )}
@@ -107,15 +104,12 @@ function Nav() {
         <Link to="/login">
           <button
             type="button"
-            className="text-white bg-[#ff6726] hover:bg-[#FFB74D] focus:ring-2 focus:outline-none focus:ring-[#ff8080] rounded-md text-xs sm:text-sm px-3 py-2 sm:px-4 sm:py-3 font-semibold"
+            className="text-white bg-[#ff6726] hover:bg-[#FFB74D] focus:ring-2 focus:outline-none focus:ring-[#ff8080] rounded-md text-xs sm:text-sm px-3 py-2 sm:px-4 sm:py-3 font-semibold transition-all duration-300"
           >
             Login/Sign up
           </button>
         </Link>
       </div>
-      {
-      //Login isModalOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
-      }
     </nav>
   );
 }

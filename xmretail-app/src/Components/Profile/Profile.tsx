@@ -6,26 +6,30 @@ import { MdEmail } from "react-icons/md";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-interface User {
-  name: string;
-  email: string;
-  phone: string;
-}
-
-const Profile: React.FC = () => {
+export default function Profile() {
   const navigate = useNavigate();
-  const storedUser = JSON.parse(localStorage.getItem("user") || "{}") as User;
-  const [user, setUser] = useState<User>({
-    name: storedUser.name || "",
-    email: storedUser.email || "",
-    phone: storedUser.phone || "",
-  });
-  const [isEditing, setIsEditing] = useState<boolean>(false);
+  const storedUser = JSON.parse(localStorage.getItem("user") || "{}");
+  const [user, setUser] = useState({ name: "", email: "", phone: "" });
+  const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
-    if (!storedUser.email) {
+    const fetchUserProfile = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:5000/api/user/profile?email=${storedUser.email}`
+        );
+        setUser(response.data);
+        localStorage.setItem("user", JSON.stringify(response.data));
+      } catch (error) {
+        console.error("Error fetching profile:", error);
+        alert("Failed to load profile. Redirecting to login...");
+        navigate("/");
+      }
+    };
+    if (storedUser.email) fetchUserProfile();
+    else {
       alert("No user data found. Redirecting to login...");
-      navigate("/login");
+      navigate("/");
     }
   }, [navigate, storedUser.email]);
 
@@ -33,10 +37,9 @@ const Profile: React.FC = () => {
 
   const handleSave = async () => {
     try {
-      await axios.post("http://localhost:5000/api/user/update-profile", user);
+      await axios.put("http://localhost:5000/api/user/update-profile", user);
       localStorage.setItem("user", JSON.stringify(user));
       setIsEditing(false);
-      alert("Profile updated successfully.");
     } catch (error) {
       console.error("Error updating profile:", error);
       alert("Failed to update profile. Try again.");
@@ -45,7 +48,7 @@ const Profile: React.FC = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("user");
-    navigate("/login");
+    navigate("/");
   };
 
   return (
@@ -57,11 +60,10 @@ const Profile: React.FC = () => {
           onClick={() => navigate("/home")}
         >
           Home
-        </span>
-        / <span className="font-semibold">Profile Page</span>
+        </span>{" "}/ <span className="font-semibold">Profile Page</span>
       </div>
 
-      {/* Profile Card */}
+      {/* Profile Section */}
       <div className="bg-white shadow-lg rounded-2xl p-6 max-w-4xl mx-auto">
         <div className="flex items-center gap-4">
           <FaUserCircle className="text-6xl text-gray-400" />
@@ -71,13 +73,13 @@ const Profile: React.FC = () => {
             </h2>
             {!isEditing && (
               <div className="flex items-center gap-2 text-gray-600 text-sm mt-1">
-                <IoCall /> {user.phone || "Not Provided"} <MdEmail /> {user.email}
+                <IoCall /> {user.phone || "Not Provided"}
+                <MdEmail /> {user.email}
               </div>
             )}
           </div>
         </div>
 
-        {/* Action Buttons */}
         <div className="mt-4 flex gap-2">
           {isEditing ? (
             <button
@@ -99,7 +101,6 @@ const Profile: React.FC = () => {
           </button>
         </div>
 
-        {/* Editable Form */}
         {isEditing && (
           <div className="mt-6">
             <label className="block text-gray-600">Name</label>
@@ -112,15 +113,15 @@ const Profile: React.FC = () => {
 
             <label className="block text-gray-600 mt-4">Email</label>
             <input
-              type="email"
+              type="text"
               value={user.email}
+              className="w-full border p-2 rounded-lg mt-2"
               disabled
-              className="w-full border p-2 rounded-lg mt-2 bg-gray-100 cursor-not-allowed"
             />
 
             <label className="block text-gray-600 mt-4">Phone</label>
             <input
-              type="tel"
+              type="text"
               value={user.phone}
               onChange={(e) => setUser({ ...user, phone: e.target.value })}
               className="w-full border p-2 rounded-lg mt-2"
@@ -129,7 +130,7 @@ const Profile: React.FC = () => {
         )}
       </div>
 
-      {/* Stats Section */}
+      {/* Financial Summary */}
       <div className="mt-6 bg-purple-600 text-white p-6 rounded-2xl shadow-lg max-w-4xl mx-auto flex justify-between">
         <div>
           <p className="text-sm">Total Savings</p>
@@ -144,7 +145,7 @@ const Profile: React.FC = () => {
         </button>
       </div>
 
-      {/* Gift Cards Section */}
+      {/* My Gift Cards Section */}
       <div className="mt-6 max-w-4xl mx-auto">
         <h3 className="text-xl font-semibold">My Gift Cards</h3>
         <div className="mt-4 bg-gray-200 p-6 rounded-2xl flex justify-center">
@@ -169,6 +170,4 @@ const Profile: React.FC = () => {
       </div>
     </div>
   );
-};
-
-export default Profile;
+}

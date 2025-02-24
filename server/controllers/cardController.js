@@ -120,6 +120,18 @@ export const deleteCard = async (req, res) => {
   }
 };
 
+
+// Fetch cards by category
+export const getCardsByCategory = async (req, res) => {
+  const { category } = req.params;
+
+  try {
+    const cards = await Card.find({ category });
+    res.status(200).json(cards);
+  } catch (error) {
+    res.status(500).json({ message: "Failed to fetch cards by category", error: error.message });
+  }
+};
 // //import Card from "../models/Card.js";
 
 // // Get single card by ID

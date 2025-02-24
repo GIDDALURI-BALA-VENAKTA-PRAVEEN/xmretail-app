@@ -1,8 +1,8 @@
+import { Link, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 
-import { Link } from "react-router-dom";
+import SimilarCards from "./SimilarCards";
 import axios from "axios";
-import { useParams } from "react-router-dom";
 
 interface CardDetailsType {
   _id: string;
@@ -19,12 +19,37 @@ interface CardDetailsType {
 const CardDetails = () => {
   const { id } = useParams();
   const [card, setCard] = useState<CardDetailsType | null>(null);
+  const [similarCards, setSimilarCards] = useState<CardDetailsType[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedAmount, setSelectedAmount] = useState<number | string>("");
+  const [showRedeemModal, setShowRedeemModal] = useState(false);
+  const [showNotesModal, setShowNotesModal] = useState(false);
 
   const handleAmountChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedAmount(event.target.value);
+  };
+
+  const fetchCard = async () => {
+    try {
+      const response = await axios.get(`http://localhost:5000/api/cards/${id}`);
+      setCard(response.data);
+      fetchSimilarCards(response.data.category);
+    } catch (err) {
+      setError("Failed to fetch card details");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchSimilarCards = async (category: string) => {
+    try {
+      const response = await axios.get(`http://localhost:5000/api/cards/category/${category}`);
+      const filteredCards = response.data.filter((c: CardDetailsType) => c._id !== id);
+      setSimilarCards(filteredCards);
+    } catch (err) {
+      console.error("Failed to fetch similar products");
+    }
   };
 
   useEffect(() => {
@@ -33,21 +58,6 @@ const CardDetails = () => {
       setLoading(false);
       return;
     }
-
-    const fetchCard = async () => {
-      try {
-        console.log(`Fetching card: http://localhost:5000/api/cards/${id}`);
-        const response = await axios.get(`http://localhost:5000/api/cards/${id}`);
-        console.log("Card data:", response.data);
-        setCard(response.data);
-      } catch (err) {
-        console.error("Error fetching card:", err);
-        setError("Failed to fetch card details");
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchCard();
   }, [id]);
 
@@ -58,49 +68,118 @@ const CardDetails = () => {
   const discountedAmount = (Number(selectedAmount) * (100 - Number(card.cashback))) / 100;
 
   return (
-    <div className="p-5 max-w-4xl mx-auto">
-      <div className="text-sm text-gray-500 flex items-center mb-4">
-        <span className="text-orange-500"><Link to="/">Home &gt;</Link></span>
-        <span className="text-orange-500 font-semibold ml-2">{card.name} Gift Card</span>
+    <div className="p-4 max-w-5xl mx-auto space-y-12">
+      {/* Breadcrumb */}
+      <div className="text-sm text-gray-500 flex flex-wrap items-center gap-1 mb-6">
+        <Link to="/" className="text-orange-500 hover:underline">Home</Link>
+        <span>&gt;</span>
+        <span className="font-semibold text-gray-700">{card.name} Gift Card</span>
       </div>
-      <div className="bg-white shadow-lg rounded-lg p-6 flex flex-col sm:flex-row items-center justify-between">
-        <div className="w-full sm:w-1/2 mb-4 sm:mb-0">
-          <img src={`http://localhost:5000/uploads/${card.image}`} alt={card.name} className="w-full h-auto object-contain rounded shadow-md" />
-          <div className="mt-4 text-center sm:text-left">
-            <p className="text-gray-500 text-xs">dealzy</p>
-            <p className="text-gray-500 text-xs">Valid for up to {card.validityMonths} months</p>
+
+      {/* Card Details */}
+      <div className="bg-white rounded-xl shadow-md p-6 grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {/* Left Section */}
+        <div className="space-y-4">
+          <img
+            src={`http://localhost:5000/uploads/${card.image}`}
+            alt={card.name}
+            className="w-full h-64 object-contain rounded-lg border"
+          />
+          <div className="text-sm text-gray-600 space-y-1 text-center lg:text-left">
+            <p>Vendor: <span className="font-medium">xmretail</span></p>
+            <p>Valid for up to <span className="font-medium">{card.validityMonths} months</span></p>
           </div>
-          <div className="mt-4 flex justify-center sm:justify-start space-x-2">
-            <button className="bg-orange-500 text-white px-4 py-2 rounded shadow hover:bg-orange-600 transition duration-300">How To Redeem</button>
-            <button className="bg-orange-500 text-white px-4 py-2 rounded shadow hover:bg-orange-600 transition duration-300">Points to Note</button>
+          <div className="flex justify-center lg:justify-start gap-4">
+            <button
+              onClick={() => setShowRedeemModal(true)}
+              className="bg-orange-500 text-white px-4 py-2 rounded-lg shadow hover:bg-orange-600"
+            >
+              How To Redeem
+            </button>
+            <button
+              onClick={() => setShowNotesModal(true)}
+              className="bg-orange-500 text-white px-4 py-2 rounded-lg shadow hover:bg-orange-600"
+            >
+              Points to Note
+            </button>
           </div>
         </div>
-        <div className="w-full sm:w-1/2 text-center sm:text-right">
-          <p className="text-lg text-gray-700 font-semibold mb-2">{card.name}</p>
-          <p className="text-red-500 text-xl font-bold mb-4">{card.cashback}% Off</p>
-          <p className="text-gray-700 text-2xl font-bold mb-4">₹ {card.price}</p>
-          
-          <div className="mt-4">
-            <h3 className="font-semibold mb-2">Select Amount to Avail Cashback:</h3>
+
+        {/* Right Section */}
+        <div className="space-y-6 text-center lg:text-right">
+          <div>
+            <h2 className="text-2xl font-semibold text-gray-800">{card.name}</h2>
+            <p className="text-red-500 text-xl font-bold mt-1">{card.cashback}% Off</p>
+            <p className="text-3xl font-bold text-gray-700 mt-2">₹ {card.price}</p>
+          </div>
+
+          <div className="space-y-3">
+            <h3 className="font-semibold text-gray-700">Select Amount:</h3>
             <select
               value={selectedAmount}
               onChange={handleAmountChange}
-              className="w-50 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500"
             >
               <option value="" disabled>Select an amount</option>
               {card.amounts.map((amount, index) => (
-                <option key={index} value={amount}>
-                  ₹{amount}
-                </option>
+                <option key={index} value={amount}>₹{amount}</option>
               ))}
             </select>
           </div>
-          <div className="mt-4">
-            <p className="text-gray-700">You pay only</p>
-            <p className="text-gray-700 text-2xl font-bold">₹ {discountedAmount.toFixed(2)}</p>
-          </div>
+
+          {selectedAmount && (
+            <div className="bg-gray-100 p-4 rounded-lg">
+              <p className="text-gray-600">You pay only</p>
+              <p className="text-2xl font-bold text-gray-800">₹ {discountedAmount.toFixed(2)}</p>
+            </div>
+          )}
         </div>
       </div>
+
+     
+
+      {/* Redeem Modal */}
+      {showRedeemModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-xl p-6 w-full max-w-lg space-y-4">
+            <h2 className="text-xl font-bold">How To Redeem</h2>
+            <ul className="list-disc list-inside space-y-2 text-gray-700 text-sm">
+              <li>Log on to the retailer's app or website.</li>
+              <li>Add items to the cart and proceed to checkout.</li>
+              <li>Enter the gift card code during payment and apply.</li>
+              <li>Pay the remaining balance if any.</li>
+            </ul>
+            <button
+              onClick={() => setShowRedeemModal(false)}
+              className="w-full bg-orange-500 text-white py-2 rounded-lg hover:bg-orange-600"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Notes Modal */}
+      {showNotesModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-xl p-6 w-full max-w-lg space-y-4">
+            <h2 className="text-xl font-bold">Points to Note</h2>
+            <ul className="list-disc list-inside space-y-2 text-gray-700 text-sm">
+              <li>Gift cards are non-refundable and cannot be exchanged for cash.</li>
+              <li>Ensure the gift card is redeemed before the expiry date.</li>
+              <li>Only one gift card can be used per transaction unless stated otherwise.</li>
+              <li>Contact customer support for any redemption issues.</li>
+            </ul>
+            <button
+              onClick={() => setShowNotesModal(false)}
+              className="w-full bg-orange-500 text-white py-2 rounded-lg hover:bg-orange-600"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
+       <SimilarCards category={card.category} currentCardId={card._id} />
     </div>
   );
 };

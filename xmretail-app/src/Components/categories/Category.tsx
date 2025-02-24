@@ -18,20 +18,6 @@ import { useRef } from "react";
 
 // Replace these imports with actual image files in your project.
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 interface Category {
   name: string;
   icon: string;

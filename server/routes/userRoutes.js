@@ -1,8 +1,10 @@
+import { getProfile, updateProfile } from "../controllers/userController.js";
+
 import { Router } from "express";
-import { updateProfile } from "../controllers/userController.js";
 
 const router = Router();
 
-router.post("/update-profile", updateProfile);
+router.put("/update-profile", updateProfile);
+router.get("/profile",  getProfile);
 
 export default router;
