@@ -3,9 +3,11 @@ import { useEffect, useState } from "react";
 import {FaTrash} from "react-icons/fa";
 import axios from "axios";
 
+const SERVER_URL = import.meta.env.VITE_API_URL;
+
 export default function Admindash() {
   const [images, setImages] = useState<(string | null)[]>(Array(9).fill(null));
-  const SERVER_URL = "http://localhost:5000";
+  // const SERVER_URL = "http://localhost:5000";
   
 
   // Fetch images from the backend

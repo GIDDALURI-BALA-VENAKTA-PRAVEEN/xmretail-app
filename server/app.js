@@ -20,6 +20,8 @@ connectDB();
 
 // Middlewares
 app.use(cors());
+// app.use(cors({origin:https://xmretail-i57o6gob0-praveens-projects-65ec0693.vercel.app/
+// }));
 app.use(express.json());
 
 // Serve static images
@@ -57,6 +59,8 @@ app.use("/api/auth", authRoutes);
 app.use("/api/user", userRoutes);
 
 
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-});
+// app.listen(PORT, () => {
+//   console.log(`Server running on http://localhost:${PORT}`);
+// });
+
+export default app;
