@@ -11,10 +11,11 @@ import imageRoutes from "./routes/imageRoutes.js";
 import mongoose from "mongoose";
 import path from "path";
 import userRoutes from "./routes/userRoutes.js";
+// import dotenv from "dotenv"
 
 const app = express();
 const PORT = 5000;
-
+dotenv.config();
 // Connect to MongoDB
 connectDB();
 
