@@ -60,6 +60,7 @@ export default function FullWidthCarousel() {
 
   return (
     <div className="relative  overflow-hidden mt-4 rounded-lg  p-2 sm:p-4 mx-2 sm:mx-4 lg:mx-6">
+      <h2>hiii</h2>
       {/* Previous Button */}
       <div className="absolute top-1/2 left-1 transform -translate-y-1/2 z-10">
         <button
@@ -73,6 +74,7 @@ export default function FullWidthCarousel() {
       {/* Carousel Container */}
       <div className="flex transition-transform duration-700 ease-in-out"
         style={{ transform: `translateX(-${(index / itemsPerSlide) * 100}%)` }}>
+          <h2>Hello</h2>
         {images.map((img, idx) => (
           <div
             key={idx}

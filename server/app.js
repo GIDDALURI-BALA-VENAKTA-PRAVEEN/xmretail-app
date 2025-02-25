@@ -19,9 +19,11 @@ const PORT = 5000;
 connectDB();
 
 // Middlewares
-app.use(cors());
-// app.use(cors({origin:https://xmretail-i57o6gob0-praveens-projects-65ec0693.vercel.app/
+// app.use(cors({
+//   origin: ["https://xmretail-g1dgf3bzq-praveens-projects-65ec0693.vercel.app"], // Replace with your frontend URL
+//   credentials: true,
 // }));
+app.use(cors());
 app.use(express.json());
 
 // Serve static images
@@ -31,8 +33,6 @@ app.use("/uploads", express.static(path.join(path.resolve(), "uploads")));
 app.use("/api/admin", adminRoute);
 app.use("/api", imageRoutes);
 app.use("/uploads", express.static("uploads"));
-
-// API Routes
 app.use("/api/cards", cardRoutes);
 
 
@@ -59,8 +59,8 @@ app.use("/api/auth", authRoutes);
 app.use("/api/user", userRoutes);
 
 
-// app.listen(PORT, () => {
-//   console.log(`Server running on http://localhost:${PORT}`);
-// });
+app.listen(PORT, () => {
+  console.log(`Server running on http://localhost:${PORT}`);
+});
 
 export default app;

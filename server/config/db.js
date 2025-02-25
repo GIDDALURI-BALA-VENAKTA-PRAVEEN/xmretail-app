@@ -1,12 +1,9 @@
 // import mongoose from "mongoose";
 
-// // import MongoClient form "mongodb";
-
 // const connectDB = async () => {
 //   try {
 //     await mongoose.connect("mongodb://localhost:27017/carouselDB", {
-//       useNewUrlParser: true,
-//       useUnifiedTopology: true,
+     
 //     });
 //     console.log("MongoDB connected successfully.");
 //   } catch (error) {
@@ -16,7 +13,6 @@
 // };
 
 // export default connectDB;
-
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 
@@ -27,8 +23,6 @@ dotenv.config();
 const connectDB = async () => {
   try {
     const conn = await mongoose.connect(process.env.MONGO_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
     });
     console.log(`MongoDB Connected: ${conn.connection.host}`);
   } catch (error) {
@@ -38,4 +32,3 @@ const connectDB = async () => {
 };
 
 export default connectDB;
-

@@ -1,6 +1,6 @@
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 
-import Login from "./Components/NavBar/Logins";
+import Login from "./Components/Login/Login";
 
 // import Welcome from "./Components/NavBar/Welcome";
 

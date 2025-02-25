@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-
 const SERVER_URL = import.meta.env.VITE_API_URL;
 import { FiPlus } from "react-icons/fi";
 import axios from "axios";
@@ -11,18 +10,40 @@ const categories = [
   "HOSTING", "DEPARTMENTAL"
 ];
 
+interface FormDataType {
+  name: string;
+  image: File | null;
+  cashback: number;
+  category: string;
+  details: string;
+  validityMonths: string; // Converted to string in the form
+  amounts: string; // Comma-separated string for input
+}
+
+
+interface CardType {
+  _id: string;
+  name: string;
+  image?: string; // Assuming image is a URL or optional
+  cashback: number;
+  category: string;
+  details: string;
+  validityMonths: number;
+  amounts: number[];
+}
+
 const CardAdmin = () => {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormDataType>({
     name: "",
     image: null,
-    cashback: "",
+    cashback: 0,
     category: "",
     details: "",
     validityMonths: "",
     amounts: "",
   });
-  const [cards, setCards] = useState([]);
-  const [editingCard, setEditingCard] = useState(null);
+  const [cards, setCards] = useState<CardType[]>([]);
+  const [editingCard, setEditingCard] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);
 
   const fetchCards = async () => {
@@ -38,23 +59,27 @@ const CardAdmin = () => {
     fetchCards();
   }, []);
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+  // const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  //   setFormData({ ...formData, [e.target.name]: e.target.value });
+  // };
+  const handleChange = (e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>) => {
+  setFormData({ ...formData, [e.target.name]: e.target.value });
+};
 
-  const handleFileChange = (e) => {
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       setFormData({ ...formData, image: e.target.files[0] });
     }
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
       const data = new FormData();
       Object.keys(formData).forEach((key) => {
         if (key === "image" && !formData.image) return;
-        data.append(key, formData[key]);
+        data.append(key, formData[key as keyof typeof formData] as string | Blob);
+
       });
 
       if (editingCard) {
@@ -67,7 +92,7 @@ const CardAdmin = () => {
       setFormData({
         name: "",
         image: null,
-        cashback: "",
+        cashback: 0,
         category: "",
         details: "",
         validityMonths: "",
@@ -81,7 +106,7 @@ const CardAdmin = () => {
     }
   };
 
-  const handleEdit = (card) => {
+  const handleEdit = (card: CardType) => {
     setEditingCard(card._id);
     setFormData({
       name: card.name,
@@ -96,12 +121,12 @@ const CardAdmin = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
     // Focus on the name input when editing a card
     setTimeout(() => {
-      const nameInput = document.querySelector('input[name="name"]');
+      const nameInput = document.querySelector('input[name="name"]')as HTMLInputElement | null;
       if (nameInput) nameInput.focus();
     }, 100); // Small delay to ensure the DOM has updated
   };
 
-  const handleDelete = async (id, name) => {
+  const handleDelete = async (id:string, name:string) => {
     try {
       await axios.delete(`${SERVER_URL}/api/cards/${id}`);
       alert(`Card "${name}" deleted!`);
@@ -127,7 +152,7 @@ const CardAdmin = () => {
               <input type="file" name="image" className="border p-2 w-full rounded" onChange={handleFileChange} />
               <input type="text" name="cashback" placeholder="Cashback %" className="border p-2 w-full rounded" onChange={handleChange} value={formData.cashback} />
               
-              <select name="category" onChange={handleChange} value={formData.category} className="border p-2 w-full rounded">
+<select name="category" onChange={handleChange} value={formData.category} className="border p-2 w-full rounded">
                 <option value="" disabled>Select a category</option>
                 {categories.map((cat) => (
                   <option key={cat} value={cat}>{cat}</option>
@@ -137,7 +162,7 @@ const CardAdmin = () => {
               <input type="number" name="validityMonths" placeholder="Validity (in months)" className="border p-2 w-full rounded" onChange={handleChange} value={formData.validityMonths} />
               <input type="text" name="amounts" placeholder="Amounts (comma-separated)" className="border p-2 w-full rounded" onChange={handleChange} value={formData.amounts} />
               
-              <button type="submit" className="w-full bg-blue-500 text-white p-2 rounded-lg">
+                            <button type="submit" className="w-full bg-blue-500 text-white p-2 rounded-lg">
                 {editingCard ? "Update Card" : "Add Card"}
               </button>
             </form>

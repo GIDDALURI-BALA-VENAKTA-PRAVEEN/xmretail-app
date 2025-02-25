@@ -21,7 +21,7 @@ interface CardDetailsType {
 const CardDetails = () => {
   const { id } = useParams();
   const [card, setCard] = useState<CardDetailsType | null>(null);
-  const [similarCards, setSimilarCards] = useState<CardDetailsType[]>([]);
+  const [, setSimilarCards] = useState<CardDetailsType[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedAmount, setSelectedAmount] = useState<number | string>("");

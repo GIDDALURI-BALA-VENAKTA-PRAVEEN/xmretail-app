@@ -19,28 +19,32 @@ export default function Login() {
 
   useEffect(() => {
     if (showOtpScreen && inputRefs.current[0]) {
-      inputRefs.current[0].focus();
+        inputRefs.current[0].focus();
     }
-  }, [showOtpScreen]);
+}, [showOtpScreen]);
 
-  useEffect(() => {
-    let countdown:number;
+useEffect(() => {
+    let countdown: ReturnType<typeof setInterval>; 
+
     if (showOtpScreen) {
-      setTimer(30);
-      setShowResendButton(false);
-      countdown = setInterval(() => {
-        setTimer((prev) => {
-          if (prev === 1) {
-            clearInterval(countdown);
-            setShowResendButton(true);
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
+        setTimer(30);
+        setShowResendButton(false);
+        
+        countdown = setInterval(() => {
+            setTimer((prev) => {
+                if (prev === 1) {
+                    clearInterval(countdown);
+                    setShowResendButton(true);
+                    return 0;
+                }
+                return prev - 1;
+            });
+        }, 1000);
     }
-    return () => clearInterval(countdown);
-  }, [showOtpScreen]);
+
+    return () => clearInterval(countdown); 
+}, [showOtpScreen]);
+
 
   const requestOtp = async (): Promise<void> => {
     if (!email.includes("@") || !email.includes(".")) {
@@ -125,7 +129,9 @@ export default function Login() {
     setShowResendButton(false);
     
   };
-
+  const setInputRef = (el: HTMLInputElement | null, index: number): void => {
+    inputRefs.current[index] = el;
+  };
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100 ">
       <div className="bg-white shadow-lg rounded-2xl p-6 w-full max-w-sm text-center">
@@ -166,7 +172,7 @@ export default function Login() {
               {otp.map((digit, index) => (
                 <input
                   key={index}
-                  ref={(el) => (inputRefs.current[index] = el)}
+                  ref={(el) => setInputRef(el, index)}
                   type="text"
                   maxLength={1}
                   value={digit}

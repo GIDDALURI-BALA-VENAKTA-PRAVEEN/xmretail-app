@@ -1,6 +1,6 @@
 import './index.css'
 
-import { BrowserRouter } from 'react-router-dom';
+
 // import Login from './Components/NavBar/Logins';
 import Routess from './Components/NavBar/Routess.tsx'
 import { StrictMode } from 'react'
