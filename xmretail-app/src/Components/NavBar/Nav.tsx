@@ -17,13 +17,13 @@ function Nav() {
   const [cards, setCards] = useState<CardType[]>([]);
   const [filteredCards, setFilteredCards] = useState<CardType[]>([]);
   const [showDropdown, setShowDropdown] = useState(false);
-  const apiUrl = import.meta.env.VITE_API_URL; // For Vite
+  const SERVER_URL = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
-    axios.get(`${apiUrl}/api/cards`).then((res) => {
+    axios.get(`${SERVER_URL}/api/cards`).then((res) => {
       setCards(res.data);
     });
-  }, [apiUrl]);
+  }, [SERVER_URL]);
 
   useEffect(() => {
     if (searchTerm.trim() === "") {
@@ -78,7 +78,7 @@ function Nav() {
                   >
                     <div className="flex items-center gap-2">
                       <img
-                        src={`${apiUrl}/uploads/${card.image}`}
+                        src={`${SERVER_URL}/uploads/${card.image}`}
                         alt={card.name}
                         className="w-7 h-7 sm:w-8 sm:h-8 rounded-full"
                       />

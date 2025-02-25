@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+const SERVER_URL = import.meta.env.VITE_API_URL;
 
 import axios from "axios";
 import enterimg from "./assets/otp.jpeg";
@@ -48,7 +49,7 @@ export default function Login() {
     }
     setShowOtpScreen(true);
     try {
-      await axios.post("http://localhost:5000/api/auth/send-otp", { email });
+      await axios.post(`${SERVER_URL}/api/auth/send-otp`, { email });
     } catch (error) {
       console.error("Send OTP Error:", error);
       alert("Error sending OTP. Check backend logs.");
@@ -88,7 +89,7 @@ export default function Login() {
     }
     try {
       const response = await axios.post<{ message: string }>(
-        "http://localhost:5000/api/auth/verify-otp",
+        `${SERVER_URL}/api/auth/verify-otp`,
         { email, otp: enteredOtp }
       );
 

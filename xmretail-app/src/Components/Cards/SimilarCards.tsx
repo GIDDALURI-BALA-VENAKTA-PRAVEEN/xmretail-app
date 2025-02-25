@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 
+const SERVER_URL = import.meta.env.VITE_API_URL;
 import axios from "axios";
 
 interface CardDetailsType {
@@ -22,7 +23,7 @@ const SimilarCards = ({ category, currentCardId }: { category: string; currentCa
   useEffect(() => {
     const fetchSimilarCards = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/api/cards/category/${category}`);
+        const response = await axios.get(`${SERVER_URL}/api/cards/category/${category}`);
         // Filter out the current card
         const filteredCards = response.data.filter((card: CardDetailsType) => card._id !== currentCardId);
         setSimilarCards(filteredCards);
@@ -49,7 +50,7 @@ const SimilarCards = ({ category, currentCardId }: { category: string; currentCa
             className="bg-white rounded-lg shadow hover:shadow-lg p-4 flex flex-col items-center text-center"
           >
             <img
-              src={`http://localhost:5000/uploads/${card.image}`}
+              src={`${SERVER_URL}/uploads/${card.image}`}
               alt={card.name}
               className="w-full h-32 object-contain mb-2"
             />

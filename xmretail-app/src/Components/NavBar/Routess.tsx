@@ -13,6 +13,7 @@ function Routess() {
     <Router>
       <Routes>
         <Route path="/" element={<App />}  />
+        <Route path="/app" element={<App />} />
 
         <Route path="/login" element={<Login />} />
         <Route path="/home" element={<Home />} />

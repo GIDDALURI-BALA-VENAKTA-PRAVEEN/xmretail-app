@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 
+const SERVER_URL = import.meta.env.VITE_API_URL;
 import Card from "./Card";
 import axios from "axios";
 
@@ -20,7 +21,7 @@ const CardApp: React.FC<CardAppProps> = ({ selectedCategory }) => {
   const [visibleCount, setVisibleCount] = useState(10); // Show 10 cards initially
 
   useEffect(() => {
-    axios.get("http://localhost:5000/api/cards").then((res) => {
+    axios.get(`${SERVER_URL}/api/cards`).then((res) => {
       setCards(res.data);
     });
   }, []);

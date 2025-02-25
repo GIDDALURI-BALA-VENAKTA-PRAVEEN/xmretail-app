@@ -4,9 +4,10 @@ import Category from "./Components/categories/Category";
 import Nav from "./Components/NavBar/Nav";
 import { useState } from "react";
 
+
 function App() {
   const [selectedCategory, setSelectedCategory] = useState<string>("");
-
+  
   return (
     <>
       <Nav />

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 
+const SERVER_URL = import.meta.env.VITE_API_URL; 
 import { FaUserCircle } from "react-icons/fa";
 import { IoCall } from "react-icons/io5";
 import { MdEmail } from "react-icons/md";
@@ -16,7 +17,7 @@ export default function Profile() {
     const fetchUserProfile = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5000/api/user/profile?email=${storedUser.email}`
+          `${SERVER_URL}/api/user/profile?email=${storedUser.email}`
         );
         setUser(response.data);
         localStorage.setItem("user", JSON.stringify(response.data));
@@ -37,7 +38,7 @@ export default function Profile() {
 
   const handleSave = async () => {
     try {
-      await axios.put("http://localhost:5000/api/user/update-profile", user);
+      await axios.put(`${SERVER_URL}/api/user/update-profile`, user);
       localStorage.setItem("user", JSON.stringify(user));
       setIsEditing(false);
     } catch (error) {

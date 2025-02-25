@@ -1,6 +1,8 @@
 import axios, { AxiosResponse } from 'axios';
 
-const API_URL = "http://localhost:5000/api/auth";
+const SERVER_URL = import.meta.env.VITE_API_URL;
+
+const API_URL = `${SERVER_URL}/api/auth`;
 
 interface OtpResponse {
   success: boolean;

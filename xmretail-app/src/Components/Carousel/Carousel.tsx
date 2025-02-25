@@ -7,13 +7,13 @@ export default function FullWidthCarousel() {
   const [index, setIndex] = useState(0);
   const [itemsPerSlide, setItemsPerSlide] = useState(3); // Default for Desktop
   const [images, setImages] = useState<string[]>([]);
-  const apiUrl = import.meta.env.VITE_API_URL;
+  const SERVER_URL = import.meta.env.VITE_API_URL;
 
   // Fetch images from the API
   useEffect(() => {
     const fetchImages = async () => {
       try {
-        const response = await axios.get(`${apiUrl}/api/images`);
+        const response = await axios.get(`${SERVER_URL}/api/images`);
         setImages(response.data);
       } catch (error) {
         console.error("Error fetching images:", error);
@@ -21,7 +21,7 @@ export default function FullWidthCarousel() {
     };
 
     fetchImages();
-  }, [apiUrl]);
+  }, [SERVER_URL]);
 
   // Update items per slide based on screen size
   useEffect(() => {
@@ -81,7 +81,7 @@ export default function FullWidthCarousel() {
             } p-1`}
           >
             <img
-              src={`${apiUrl}${img}`}
+              src={`${SERVER_URL}${img}`}
               alt={`Slide ${idx + 1}`}
               className="w-full h-42 sm:h-56 md:h-48 lg:h-56 object-cover rounded-lg shadow-md"
             />
